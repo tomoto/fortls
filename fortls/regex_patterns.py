@@ -94,6 +94,7 @@ class FortranRegularExpressions:
         I,
     )
     PARAMETER_VAL: Pattern = compile(r"\w*[\s\&]*=(([\s\&]*[\w\.\-\+\*\/\'\"])*)", I)
+    DATA_VAL: Pattern = compile(r"\w*[\s\&]*(?:\([^\)]*\))?[\s\&]*/([^/]+)/", I)
     TATTR_LIST: Pattern = compile(
         r"[ ]*,[ ]*(PUBLIC|PRIVATE|ABSTRACT|EXTENDS\(\w*\))", I
     )

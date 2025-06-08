@@ -1448,14 +1448,15 @@ class FortranFile:
                             kind=obj_info.var_kind,
                             link_obj=link_name,
                         )
-                        # If the object is fortran_var and a parameter include
-                        #  the value in hover
-                        if new_var.is_parameter():
-                            _, col = find_word_in_line(line, name)
-                            match = FRegex.PARAMETER_VAL.match(line[col:])
-                            if match:
-                                var = " ".join(match.group(1).strip().split())
-                                new_var.set_parameter_val(var)
+                        # If the object is fortran_var and has parameter/data values,
+                        # include the value in hover
+                        _, col = find_word_in_line(line, name)
+                        match = FRegex.PARAMETER_VAL.match(line[col:])
+                        if match is None:
+                            match = FRegex.DATA_VAL.match(line[col:])
+                        if match:
+                            var = " ".join(match.group(1).strip().split())
+                            new_var.set_parameter_val(var)
 
                         # Check if the "variable" is external and if so cycle
                         if find_external(file_ast, desc, name, new_var):

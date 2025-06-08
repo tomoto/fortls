@@ -19,4 +19,5 @@ program params
                                         23 + &
                                         2 /1        ! comment
     INTEGER(4), PARAMETER :: SIG$ERR   = -1
+    INTEGER :: VAR_DATA(4) /1,2,3,4/
 end program params
