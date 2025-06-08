@@ -1408,7 +1408,7 @@ class FortranFile:
                         if link_name.lower() == "null":
                             link_name = None
                     else:
-                        name = var_name.split("=")[0]
+                        name = re.split(r"[=/]", var_name)[0]
                     # Add dimension if specified
                     # TODO: turn into function and add support for co-arrays i.e. [*]
                     # Copy global keywords to the individual variable

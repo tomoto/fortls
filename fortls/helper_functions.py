@@ -179,9 +179,13 @@ def separate_def_list(test_str: str) -> list[str] | None:
 
     >>> separate_def_list('var, init_var(3) = [1,2,3], array(3,3)')
     ['var', 'init_var(3) = [1,2,3]', 'array(3,3)']
+
+    >>> separate_def_list('var, data_var(3) /1,2,3/, var2')
+    ['var', 'data_var(3) /1,2,3/', 'var2']
     """
     stripped_str = strip_strings(test_str)
     paren_count = 0
+    inside_slash = False
     def_list: list[str] = []
     curr_str = ""
     for char in stripped_str:
@@ -189,7 +193,9 @@ def separate_def_list(test_str: str) -> list[str] | None:
             paren_count += 1
         elif char in (")", "]"):
             paren_count -= 1
-        elif (char == ",") and (paren_count == 0):
+        elif (char == "/") and (paren_count == 0):
+            inside_slash = not inside_slash
+        elif (char == ",") and (paren_count == 0) and not inside_slash:
             curr_str = curr_str.strip()
             if curr_str != "":
                 def_list.append(curr_str)
