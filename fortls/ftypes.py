@@ -17,6 +17,8 @@ class VarInfo:
     var_names: list[str]  #: Variable names
     #: Kind of variable e.g. ``INTEGER*4`` etc.
     var_kind: str | None = field(default=None)
+    #: True if the definition should be pending, i.e. PARAMETER, DATA, or DIMENSION
+    pending: bool = field(default=False)
 
 
 @dataclass

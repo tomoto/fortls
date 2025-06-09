@@ -241,6 +241,30 @@ def read_var_def(line: str, var_type: str | None = None, fun_only: bool = False)
     )
 
 
+def read_pending_var_def(line: str) -> tuple[Literal["var"], VarInfo] | None:
+    """Attempt to read pending definition line (PARAMETER, DATA, and DIMENSION)"""
+    var_type = None
+    for pattern in [FRegex.PARAMETER, FRegex.DATA, FRegex.DIMENSION]:
+        match = pattern.match(line)
+        if match is not None:
+            var_type = match.group(1).upper()
+            break
+    
+    if var_type is None:
+        return None
+    
+    # NOTE: This does not work correctly for `DATA N, M /1, 2/` style
+    var_words = separate_def_list(match.group(2))
+
+    return "var", VarInfo(
+        var_type=var_type,
+        keywords=[],
+        var_names=var_words,
+        var_kind=None,
+        pending= True,
+    )
+
+
 def get_procedure_modifiers(
     line: str, regex: Pattern
 ) -> tuple[str, str, str] | tuple[None, None, None]:
@@ -719,6 +743,7 @@ def_tests = [
     read_submod_def,
     read_inc_stmt,
     read_vis_stmnt,
+    read_pending_var_def,
 ]
 
 
@@ -1453,6 +1478,7 @@ class FortranFile:
                         _, col = find_word_in_line(line, name)
                         match = FRegex.PARAMETER_VAL.match(line[col:])
                         if match is None:
+                            # NOTE: This does not work correctly for `DATA N, M /1, 2/` style
                             match = FRegex.DATA_VAL.match(line[col:])
                         if match:
                             var = " ".join(match.group(1).strip().split())

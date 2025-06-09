@@ -109,6 +109,11 @@ class FortranAST:
         if self.current_scope is None:
             self.create_none_scope()
             new_var.FQSN = f"{self.none_scope.FQSN}::{new_var.name.lower()}"
+        
+        if new_var.pending:
+            self.current_scope.add_pending_variables(new_var)
+            return
+
         self.current_scope.add_child(new_var)
         self.variable_list.append(new_var)
         if new_var.is_external:
