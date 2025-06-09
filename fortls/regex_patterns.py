@@ -25,6 +25,9 @@ class FortranRegularExpressions:
     INCLUDE: Pattern = compile(r"[ ]*INCLUDE[ :]*[\'\"]([^\'\"]*)", I)
     CONTAINS: Pattern = compile(r"[ ]*(CONTAINS)[ ]*$", I)
     IMPLICIT: Pattern = compile(r"[ ]*IMPLICIT[ ]+([a-z]*)", I)
+    PARAMETER: Pattern = compile(r"[ ]*(PARAMETER)[ ]*\((.*)\)", I)
+    DATA: Pattern = compile(r"[ ]*(DATA)[ ]+([a-z].*)", I)
+    DIMENSION: Pattern = compile(r"[ ]*(DIMENSION)[ ]+([a-z].*)", I)
     #: Parse procedure keywords but not if they start with , or ( or end with , or )
     #: This is to avoid parsing as keywords variables named pure, impure, etc.
     SUB_MOD: Pattern = compile(
@@ -94,6 +97,7 @@ class FortranRegularExpressions:
         I,
     )
     PARAMETER_VAL: Pattern = compile(r"\w*[\s\&]*=(([\s\&]*[\w\.\-\+\*\/\'\"])*)", I)
+    DATA_VAL: Pattern = compile(r"\w*[\s\&]*(?:\([^\)]*\))?[\s\&]*/([^/]+)/", I)
     TATTR_LIST: Pattern = compile(
         r"[ ]*,[ ]*(PUBLIC|PRIVATE|ABSTRACT|EXTENDS\(\w*\))", I
     )

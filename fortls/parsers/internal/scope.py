@@ -18,6 +18,7 @@ from .base import FortranObj
 from .diagnostics import Diagnostic
 from .imports import Import
 from .utilities import find_in_scope
+from .variable import Variable
 
 if TYPE_CHECKING:
     from .ast import FortranAST
@@ -40,6 +41,7 @@ class Scope(FortranObj):
         self.eline: int = line_number
         self.name: str = name
         self.children: list[T[Scope]] = []
+        self.pending_variables: list[Variable] = []
         self.members: list = []
         self.use: list[Use | Import] = []
         self.keywords: list = keywords
@@ -78,6 +80,9 @@ class Scope(FortranObj):
     def add_child(self, child):
         self.children.append(child)
         child.set_parent(self)
+    
+    def add_pending_variables(self, variable: Variable):
+        self.pending_variables.append(variable)
 
     def update_fqsn(self, enc_scope=None):
         if enc_scope is not None:
@@ -108,6 +113,11 @@ class Scope(FortranObj):
         fqsn_dict: dict[str, int] = {}
         errors: list[Diagnostic] = []
         known_types: dict[str, FortranObj] = {}
+
+        for pending_var in self.pending_variables:
+            defined_var = find_in_scope(self, pending_var.name, obj_tree)
+            if defined_var is None:
+                self.add_child(pending_var)
 
         for child in self.children:
             # Skip masking/double checks for interfaces

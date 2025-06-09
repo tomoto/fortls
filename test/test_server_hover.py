@@ -285,6 +285,17 @@ def test_hover_literal_string_dq():
     validate_hover(results, ref_results)
 
 
+def test_hover_data_values():
+    """Test that hovering over variables with data values"""
+    string = write_rpc_request(1, "initialize", {"rootPath": str(test_dir)})
+    file_path = test_dir / "hover" / "parameters.f90"
+    string += hover_req(file_path, 21, 21)
+    errcode, results = run_request(string, fortls_args=["--sort_keywords"])
+    assert errcode == 0
+    ref_results = ["```fortran90\nINTEGER, DIMENSION(4) :: VAR_DATA = 1,2,3,4\n```"]
+    validate_hover(results, ref_results)
+
+
 def test_hover_pointer_attr():
     """Test that hovering maintains the variable attributes e.g. POINTER"""
     string = write_rpc_request(1, "initialize", {"rootPath": str(test_dir)})

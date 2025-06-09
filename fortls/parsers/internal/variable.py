@@ -134,7 +134,7 @@ class Variable(FortranObj):
         # If this is not a preprocessor variable, we can append the variable name
         if not hover_str.startswith("#"):
             hover_str += f" :: {self.name}"
-        if self.is_parameter() and self.param_val:
+        if self.param_val:
             hover_str += f" = {self.param_val}"
         return hover_str, doc_str
 
@@ -154,9 +154,6 @@ class Variable(FortranObj):
 
     def is_callable(self):
         return self.callable
-
-    def is_parameter(self):
-        return self.is_const
 
     def set_parameter_val(self, val: str):
         self.param_val = val
